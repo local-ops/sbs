@@ -13,6 +13,10 @@ apps:
   static:
     ai_consult:
       domain: ai.localhost
+      local_port: 9081
+    whyeven:
+      domain: whyeven.localhost
+      local_port: 9080
     auth_demos:
       none:
         domain: auth-none.localhost

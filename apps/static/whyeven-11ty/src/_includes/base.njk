@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} — {% endif %}{{ siteTitle }}</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/lists.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__title" href="/">{{ siteTitle }}</a>
+      <p class="site-header__tagline">{{ siteTagline }}</p>
+    </div>
+  </header>
+  {{ content | safe }}
+</body>
+</html>

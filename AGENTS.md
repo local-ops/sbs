@@ -2,7 +2,7 @@
 
 ## Projekt
 
-**sbs** = *small business solution*. Monolithisches Docker-Compose-Projekt: Traefik (TLS), Authentik (Auth + ForwardAuth), n8n, statische Site `ai-consult-11ty`, fünf Auth-Demos unter `apps/static/`. Registry-Images in `compose/`; eigener Code nur unter `apps/`.
+**sbs** = *small business solution*. Monolithisches Docker-Compose-Projekt: Traefik (TLS), Authentik (Auth + ForwardAuth), n8n, statische Sites `ai-consult-11ty` und `whyeven-11ty`, fünf Auth-Demos unter `apps/static/`. Registry-Images in `compose/`; eigener Code nur unter `apps/`.
 
 Repo: `local-ops/sbs` · Server: `/docker/sbs` · Compose-Projektname: `sbs` (`docker-compose.yml`).
 
@@ -55,14 +55,24 @@ Traefik: Ausnahme Docker-Socket.
 | Namespace | Zweck |
 |-----------|--------|
 | **system** | Prod-Server: `deploy` (CI), `start`, `stop`, `secrets-export`, `init`, `bootstrap-host` |
-| **dev** | Lokal: `setup`, `start`, `stop`, `export-config`, `site-dev` |
+| **dev** | Lokal (nur Stack): `setup`, `init`, `start`, `stop`, `export-config`, `demos-build` |
 | **maintenance** | Stubs: `restore`, `update-zsh` |
 
 - Prod (CI): `task system:deploy` — immer `secrets-export` (wenn `config.secrets.enc.yml`), dann `compose up`
 - Prod (manuell): `task system:start` — Secrets nur bei geändertem Stamp
-- Lokal einmalig: `task dev:setup`
-- Lokal: `task dev:start` (nicht `system:start` — lädt `99_local.yml`)
-- Buildx macOS: `docker buildx use colima-docker`
+- Lokal: `task dev:start` (nicht `system:start` — lädt `99_local.yml`; `deps: init` startet Colima bei Bedarf)
+- **Docker lokal:** `scripts/ensure-docker.sh` — prüft `docker info`, sonst `colima start --profile=docker`, Context `colima-docker`, Buildx `colima-docker`. Wird von `dev:init` und App-`init` vor Compose genutzt.
+- Lokal einmalig: `task dev:setup` (legt Config an, ruft `init` + `export-config` auf)
+
+## App-Taskfiles (`apps/**/Taskfile.yml`)
+
+**Services immer im App-Verzeichnis aufrufen** (`cd apps/static/<app> && task …`), nicht über `Taskfile.dev.yml` vom Repo-Root.
+
+Jede statische App **muss** u. a. haben: `install`, `dev`, `build`, `clean`, `init` (ensure-docker), `docker-build`, `docker-start`, `docker-stop` (`docker-*` mit `deps: [init]`). Compose-Service-Name in `COMPOSE_SERVICE`; Compose läuft gegen sbs-Root mit `COMPOSE_FILE` inkl. `99_local.yml`.
+
+**Lokal ohne Traefik:** In [`compose/99_local.yml`](compose/99_local.yml) jedem statischen Web-Service `ports` (Host→80) geben; Ports in `config.local.yml` als `apps.static.<app>.local_port` (→ `APPS_STATIC_*_LOCAL_PORT`). Prod (`99_local` nicht geladen) nur Traefik, keine Host-Ports.
+
+**Nach `docker-start`:** Immer [`scripts/print-app-url.sh`](scripts/print-app-url.sh) aufrufen — gibt Direct-URL (`http://127.0.0.1:<port>/`) und Traefik-URL aus `.env` auf der Konsole aus. Neue statische Apps: Case in Script ergänzen + `print-app-url.sh` am Ende von `docker-start`.
 
 ## Deployment
 

@@ -1,6 +1,15 @@
 # Local dev layer — loaded only via COMPOSE_FILE in task dev:* (not on production).
 # Postgres/Redis as named volumes (macOS Colima virtiofs cannot chown bind mounts).
+# Static apps: host ports for direct testing without Traefik (see config.local.example.yml).
 services:
+  ai-consult-web:
+    ports:
+      - "${APPS_STATIC_AI_CONSULT_LOCAL_PORT:-9081}:80"
+
+  whyeven-web:
+    ports:
+      - "${APPS_STATIC_WHYEVEN_LOCAL_PORT:-9080}:80"
+
   postgresql:
     volumes:
       - sbs-postgres-data:/var/lib/postgresql/data

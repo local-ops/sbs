@@ -1,0 +1,31 @@
+---
+layout: base.njk
+---
+{% import "list.njk" as L %}
+{% set navColumns = id | whyevenNavColumns %}
+{% set childList = id | whyevenNavChildren %}
+<div class="app-shell">
+  {% if navColumns and navColumns.length %}
+  <div class="nav-columns" role="navigation" aria-label="Baumnavigation">
+    {% for col in navColumns %}
+    <div class="nav-column">
+      {{ L.navList(col.items, "compact", col.activeId) }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <main id="main" class="main">
+    <h1 class="main__heading">{{ title }}</h1>
+    {% if type == "category" %}
+    <div class="prose">{{ content | safe }}</div>
+    {% if childList and childList.length %}
+    <section class="main-children" aria-label="Unterbereiche">
+      <h2 class="visually-hidden">Unterbereiche</h2>
+      {{ L.navList(childList, "full", "") }}
+    </section>
+    {% endif %}
+    {% else %}
+    <article class="prose">{{ content | safe }}</article>
+    {% endif %}
+  </main>
+</div>

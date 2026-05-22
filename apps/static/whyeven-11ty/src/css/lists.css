@@ -1,0 +1,139 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (min-width: 48rem) {
+  .app-shell:not(.app-shell--home) {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.app-shell--home .main {
+  flex: 1;
+}
+
+.nav-columns {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+@media (min-width: 48rem) {
+  .nav-columns {
+    flex-direction: row;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+}
+
+.nav-column {
+  flex-shrink: 0;
+  width: 100%;
+  max-height: 12rem;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (min-width: 48rem) {
+  .nav-column {
+    width: var(--nav-col-width);
+    max-height: none;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+
+  .nav-column:last-child {
+    border-right: none;
+  }
+}
+
+.main {
+  flex: 1;
+  padding: var(--space-lg);
+  min-width: 0;
+}
+
+.main--home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.main--home .main-nav {
+  width: min(28rem, 100%);
+  text-align: left;
+}
+
+.main-children {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list__item {
+  margin: 0;
+}
+
+.list__link {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 0.25rem;
+}
+
+.list__link:hover {
+  background: rgba(126, 184, 218, 0.12);
+}
+
+.list--compact .list__link {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.list--full .list__link {
+  padding: 0.65rem 0.85rem;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+}
+
+.list__link[aria-current="page"] {
+  background: rgba(126, 184, 218, 0.2);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.list--full .list__item + .list__item {
+  border-top: 1px solid var(--border);
+}
+
+.list--full .list__link {
+  border-radius: 0;
+}
+
+.list--full .list__item:first-child .list__link {
+  border-radius: 0.35rem 0.35rem 0 0;
+}
+
+.list--full .list__item:last-child .list__link {
+  border-radius: 0 0 0.35rem 0.35rem;
+}
+
+.list--full .list__item:only-child .list__link {
+  border-radius: 0.35rem;
+}

@@ -1,6 +1,6 @@
 # sbs — small business solution
 
-Monolithisches Docker-Compose-Projekt (**sbs**) für Traefik, Authentik, n8n, die statische Site **ai-consult-11ty** und fünf **Auth-Demos** zum Testen von Schutzvarianten.
+Monolithisches Docker-Compose-Projekt (**sbs**) für Traefik, Authentik, n8n, die statischen Sites **ai-consult-11ty** und **whyeven-11ty** (persönliche Wissensbasis) sowie fünf **Auth-Demos** zum Testen von Schutzvarianten.
 
 GitHub: [`local-ops/sbs`](https://github.com/local-ops/sbs) · Prod auf dem Server: `/docker/sbs`
 
@@ -23,6 +23,7 @@ compose/00…05.yml, compose/05_apps_demos.yml, compose/99_local.yml
 config/auth/authentik/blueprints/   # deklarative Authentik-Config
 data/ backup/                             # gitignored
 apps/static/ai-consult-11ty/
+apps/static/whyeven-11ty/                 # Wissensbaum (Eleventy), Prod-Domain `whyeven.org`
 apps/static/demo-base/                    # nginx demos (auth-none, auth-forward, …)
 apps/static/auth-oidc/                    # native OIDC client demo
 apps/static/auth-jwt-api/               # Bearer JWT API demo
@@ -63,7 +64,7 @@ Login danach: `https://auth.rust-infra.de` → User **`akadmin`**, Passwort = `b
 ## Lokaler Test (Colima)
 
 ```bash
-docker buildx use colima-docker    # einmalig, falls acr-builder aktiv war
+`task dev:init` startet bei Bedarf Colima (`colima start --profile=docker`) und setzt Context/Buildx — vor allen lokalen Compose-/Docker-Tasks.
 task dev:setup                     # config.local.yml + config.secrets.local.yml
 task dev:start                     # Colima + Stack mit 99_local.yml
 ```
@@ -71,12 +72,20 @@ task dev:start                     # Colima + Stack mit 99_local.yml
 `/etc/hosts` (Beispiel):
 
 ```
-127.0.0.1 authentik.localhost n8n.localhost ai.localhost \
+127.0.0.1 authentik.localhost n8n.localhost ai.localhost whyeven.localhost \
   auth-none.localhost auth-forward.localhost auth-forward-ops.localhost \
   auth-oidc.localhost auth-jwt-api.localhost
 ```
 
-Nur Eleventy ohne Stack: `task dev:site-dev`
+Apps (Eleventy/Container) **immer im App-Ordner**:
+
+```bash
+cd apps/static/whyeven-11ty
+task install && task dev          # nur Site
+task docker-start                 # Container → http://127.0.0.1:9080 (ohne Traefik)
+```
+
+Ports lokal in `compose/99_local.yml` (`whyeven` 9080, `ai-consult` 9081; über `config.local.yml` änderbar). Ganzer Stack inkl. Traefik: `task dev:start` vom Repo-Root.
 
 ## Auth-Demos
 

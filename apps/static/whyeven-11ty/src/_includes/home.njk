@@ -1,0 +1,12 @@
+---
+layout: base.njk
+---
+{% import "list.njk" as L %}
+<div class="app-shell app-shell--home">
+  <main id="main" class="main main--home">
+    <h1 class="visually-hidden">Start</h1>
+    <nav class="main-nav" aria-label="Hauptkategorien">
+      {{ L.navList(whyevenRootList, "full", "") }}
+    </nav>
+  </main>
+</div>

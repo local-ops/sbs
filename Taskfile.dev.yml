@@ -22,13 +22,21 @@ tasks:
         else
           echo "config.secrets.local.yml already exists"
         fi
+      - task: init
       - task: export-config
 
-  colima:
-    desc: Start Colima profile docker and use context colima-docker
+  init:
+    desc: Ensure Docker (Colima profile docker) + data directories (run before compose/docker tasks)
+    dir: "{{.ROOT_DIR}}"
     cmds:
-      - colima start -p docker
-      - docker context use colima-docker
+      - bash ./scripts/ensure-docker.sh
+      - task system:init
+
+  colima:
+    desc: Ensure Colima profile docker and context colima-docker (alias for docker part of init)
+    dir: "{{.ROOT_DIR}}"
+    cmds:
+      - bash ./scripts/ensure-docker.sh
 
   docker-context:
     desc: Show active Docker context
@@ -68,6 +76,7 @@ tasks:
   demos-build:
     desc: Build all auth demo images
     dir: "{{.ROOT_DIR}}"
+    deps: [init]
     env:
       COMPOSE_FILE: "{{.COMPOSE_LOCAL}}"
     cmds:
@@ -77,6 +86,7 @@ tasks:
   compose-config:
     desc: Validate prod + local compose merge
     dir: "{{.ROOT_DIR}}"
+    deps: [init]
     env:
       COMPOSE_FILE: "{{.COMPOSE_LOCAL}}"
       SBS_EXPORT_LOCAL: "1"
@@ -85,13 +95,12 @@ tasks:
       - docker compose config --quiet
 
   start:
-    desc: Local stack — Colima, init, local .env, compose with 99_local.yml
+    desc: Local stack — Docker init, local .env, compose with 99_local.yml
     dir: "{{.ROOT_DIR}}"
+    deps: [init]
     env:
       COMPOSE_FILE: "{{.COMPOSE_LOCAL}}"
     cmds:
-      - task: colima
-      - task system:init
       - bash ./scripts/fix-data-permissions.sh
       - task: export-config
       - docker compose up -d --build
@@ -103,27 +112,3 @@ tasks:
       COMPOSE_FILE: "{{.COMPOSE_LOCAL}}"
     cmds:
       - docker compose down
-
-  site-install:
-    desc: npm ci for ai-consult-11ty
-    dir: "{{.ROOT_DIR}}/apps/static/ai-consult-11ty"
-    cmds:
-      - npm ci
-
-  site-dev:
-    desc: Eleventy dev server for ai-consult-11ty
-    dir: "{{.ROOT_DIR}}/apps/static/ai-consult-11ty"
-    cmds:
-      - npm run dev
-
-  site-build:
-    desc: Build static site into _site
-    dir: "{{.ROOT_DIR}}/apps/static/ai-consult-11ty"
-    cmds:
-      - npm run build
-
-  site-clean:
-    desc: Remove _site output
-    dir: "{{.ROOT_DIR}}/apps/static/ai-consult-11ty"
-    cmds:
-      - rm -rf _site

@@ -1,0 +1,18 @@
+{#
+  Single list pattern: compact (nav columns) vs full (main area).
+  items: { id, title, href }[]
+  activeId: optional string for aria-current
+#}
+{% macro navList(items, scale, activeId) %}
+<ul class="list list--{{ scale }}">
+  {% for item in items %}
+  <li class="list__item">
+    <a
+      class="list__link"
+      href="{{ item.href }}"
+      {% if activeId and item.id == activeId %}aria-current="page"{% endif %}
+    >{{ item.title }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}

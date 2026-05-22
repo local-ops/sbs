@@ -4,7 +4,7 @@ vars:
   SBS_ROOT:
     sh: cd "{{.TASKFILE_DIR}}/../../.." && pwd
   COMPOSE_LOCAL: "{{.SBS_ROOT}}/docker-compose.yml:{{.SBS_ROOT}}/compose/99_local.yml"
-  COMPOSE_SERVICE: ai-consult-web
+  COMPOSE_SERVICE: whyeven-web
 
 tasks:
   default:
@@ -39,7 +39,7 @@ tasks:
       - bash "{{.SBS_ROOT}}/scripts/ensure-docker.sh"
 
   docker-build:
-    desc: Build ai-consult-web image (sbs compose, local .env)
+    desc: Build whyeven-web image (sbs compose, local .env)
     deps: [init]
     dir: "{{.SBS_ROOT}}"
     env:
@@ -50,7 +50,7 @@ tasks:
       - docker compose build {{.COMPOSE_SERVICE}}
 
   docker-start:
-    desc: Build and start ai-consult-web (local http://127.0.0.1:9081 without Traefik; via Traefik with dev:start)
+    desc: Build and start whyeven-web (local http://127.0.0.1:9080 without Traefik; via Traefik with dev:start)
     deps: [init]
     dir: "{{.SBS_ROOT}}"
     env:
@@ -62,7 +62,7 @@ tasks:
       - bash ./scripts/print-app-url.sh {{.COMPOSE_SERVICE}}
 
   docker-stop:
-    desc: Stop ai-consult-web container
+    desc: Stop whyeven-web container
     dir: "{{.SBS_ROOT}}"
     env:
       COMPOSE_FILE: "{{.COMPOSE_LOCAL}}"

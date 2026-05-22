@@ -1,0 +1,33 @@
+- id: gesundheit
+  title: Gesundheit
+  children:
+    - id: koerper
+      title: Körper
+      children:
+        - id: beispiel-schlaf
+          title: Schlaf — Beispiel
+          children: []
+    - id: geist
+      title: Geist
+      children: []
+    - id: seele
+      title: Seele
+      children: []
+- id: berufung
+  title: Berufung
+  children: []
+- id: beziehungen
+  title: Beziehungen
+  children:
+    - id: freunde
+      title: Freunde
+      children: []
+    - id: kinder
+      title: Kinder
+      children: []
+    - id: partner
+      title: Partner
+      children: []
+- id: finanzen
+  title: Finanzen
+  children: []
